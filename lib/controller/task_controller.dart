@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import '../models/task_model.dart';
+import '../services/database_helper.dart';
 
 class TaskController extends GetxController {
   var taskList = <Task>[].obs;
+  final DatabaseHelper dbHelper = DatabaseHelper.instance;
 
   @override
   void onInit() {
@@ -12,36 +12,23 @@ class TaskController extends GetxController {
     loadTasks();
   }
 
-  void addTask(Task task) {
-    taskList.add(task);
-    saveTasks();
+  void addTask(Task task) async {
+    await dbHelper.insertTask(task);
+    loadTasks();
   }
 
-  void editTask(int index, Task task) {
-    taskList[index] = task;
-    saveTasks();
+  void editTask(Task task) async {
+    await dbHelper.updateTask(task);
+    loadTasks();
   }
 
-  void deleteTask(int index) {
-    taskList.removeAt(index);
-    saveTasks();
+  void deleteTask(int id) async {
+    await dbHelper.deleteTask(id);
+    loadTasks();
   }
 
   void loadTasks() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? tasksString = prefs.getString('tasks');
-    if (tasksString != null) {
-      List<dynamic> decodedTasks = jsonDecode(tasksString);
-      taskList.value = decodedTasks.map((taskJson) {
-        return Task.fromJson(jsonDecode(taskJson));
-      }).toList();
-    }
-  }
-
-  void saveTasks() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> encodedTasks =
-        taskList.map((task) => jsonEncode(task.toJson())).toList();
-    await prefs.setString('tasks', jsonEncode(encodedTasks));
+    final List<Map<String, dynamic>> taskMapList = await dbHelper.getTaskMapList();
+    taskList.value = taskMapList.map((taskMap) => Task.fromJson(taskMap)).toList();
   }
 }

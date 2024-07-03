@@ -147,20 +147,20 @@ class _HomePageState extends State<HomePage> {
                           IconButton(
                             icon: const Icon(Icons.edit),
                             onPressed: () {
-                              Get.to(AddTask(task: task, index: index));
+                              Get.to(AddTask(task: task));
                             },
                           ),
                           IconButton(
                             icon: const Icon(Icons.delete),
                             onPressed: () {
-                              taskController.deleteTask(index);
+                              taskController.deleteTask(task.id!);
                             },
                           ),
                         ],
                       ),
                       onTap: () {
                         task.isCompleted = !task.isCompleted;
-                        taskController.saveTasks();
+                        taskController.editTask(task);
                       },
                     );
                   },

@@ -1,4 +1,5 @@
 class Task {
+  int? id;
   String title;
   String description;
   DateTime date;
@@ -6,6 +7,7 @@ class Task {
   bool isCompleted;
 
   Task({
+    this.id,
     required this.title,
     required this.description,
     required this.date,
@@ -13,19 +15,25 @@ class Task {
     this.isCompleted = false,
   });
 
-  Map<String, dynamic> toJson() => {
-        'title': title,
-        'description': description,
-        'date': date.toIso8601String(),
-        'priority': priority,
-        'isCompleted': isCompleted,
-      };
+  factory Task.fromJson(Map<String, dynamic> json) {
+    return Task(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      date: DateTime.parse(json['date']),
+      priority: json['priority'],
+      isCompleted: json['isCompleted'] == 1,
+    );
+  }
 
-  factory Task.fromJson(Map<String, dynamic> json) => Task(
-        title: json['title'],
-        description: json['description'],
-        date: DateTime.parse(json['date']),
-        priority: json['priority'],
-        isCompleted: json['isCompleted'],
-      );
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'date': date.toIso8601String(),
+      'priority': priority,
+      'isCompleted': isCompleted ? 1 : 0,
+    };
+  }
 }

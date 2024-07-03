@@ -7,9 +7,8 @@ import '../models/task_model.dart';
 
 class AddTask extends StatefulWidget {
   final Task? task;
-  final int? index;
 
-  const AddTask({super.key, this.task, this.index});
+  const AddTask({super.key, this.task});
 
   @override
   State<AddTask> createState() => _AddTaskState();
@@ -113,9 +112,11 @@ class _AddTaskState extends State<AddTask> {
                         description: _descriptionController.text,
                         date: _selectedDate,
                         priority: _selectedPriority,
+                        isCompleted: widget.task?.isCompleted ?? false,
+                        id: widget.task?.id,
                       );
-                      if (widget.task != null && widget.index != null) {
-                        taskController.editTask(widget.index!, newTask);
+                      if (widget.task != null) {
+                        taskController.editTask(newTask);
                       } else {
                         taskController.addTask(newTask);
                       }
